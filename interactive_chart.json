@@ -3,64 +3,40 @@
   "description": "Interactive line chart of global August temperature anomalies (°C, 1850–2025).",
   "width": 700,
   "height": 350,
-  "data": {
-    "url": "https://raw.githubusercontent.com/mmoyann/fit3179-week9-map/main/data.csv"
-  },
-
-  "transform": [
-    { "calculate": "toNumber(datum.Year)", "as": "Year_num" }
-  ],
-
-  "params": [
-    {
-      "name": "minYear",
-      "value": 1850,
-      "bind": { "input": "range", "min": 1850, "max": 2025, "step": 1, "name": "From year: " }
-    },
-    {
-      "name": "maxYear",
-      "value": 2025,
-      "bind": { "input": "range", "min": 1850, "max": 2025, "step": 1, "name": "To year: " }
-    }
-  ],
+  "data": { "url": "https://raw.githubusercontent.com/mmoyann/fit3179-week9-map/main/data.csv" },
 
   "transform": [
     { "calculate": "toNumber(datum.Year)", "as": "Year_num" },
     { "filter": "datum.Year_num >= minYear && datum.Year_num <= maxYear" }
   ],
 
+  "params": [
+    { "name": "minYear", "value": 1850,
+      "bind": { "input": "range", "min": 1850, "max": 2025, "step": 1, "name": "From year: " } },
+    { "name": "maxYear", "value": 2025,
+      "bind": { "input": "range", "min": 1850, "max": 2025, "step": 1, "name": "To year: " } }
+  ],
+
   "layer": [
     {
-      "mark": {"type": "line", "strokeWidth": 2, "color": "#6A0DAD"},
+      "mark": { "type": "line", "strokeWidth": 2 },
       "encoding": {
-        "x": {"field": "Year_num", "type": "quantitative", "title": "Year"},
-        "y": {"field": "Anomaly", "type": "quantitative", "title": "Temperature anomaly (°C)"},
+        "x": { "field": "Year_num", "type": "quantitative", "title": "Year" },
+        "y": { "field": "Anomaly", "type": "quantitative", "title": "Temperature anomaly (°C)" },
         "tooltip": [
-          {"field": "Year_num", "type": "quantitative"},
-          {"field": "Anomaly", "type": "quantitative", "format": ".2f", "title": "Anomaly (°C)"}
+          { "field": "Year_num", "type": "quantitative", "title": "Year" },
+          { "field": "Anomaly", "type": "quantitative", "format": ".2f", "title": "Anomaly (°C)" }
         ]
       }
     },
-    { "mark": {"type": "rule", "strokeDash": [3,3]}, "encoding": {"y": {"datum": 0}} },
-    { "mark": {"type": "rule", "color": "#c00", "strokeDash": [4,4]}, "encoding": {"y": {"datum": 1.5}} },
+    { "mark": { "type": "rule", "strokeDash": [3,3] }, "encoding": { "y": { "datum": 0 } } },
+    { "mark": { "type": "rule", "strokeDash": [4,4] }, "encoding": { "y": { "datum": 1.5 } } },
     {
-      "mark": {"type": "text", "align": "left", "dx": 4, "dy": -6, "color": "#c00"},
+      "mark": { "type": "text", "align": "left", "dx": 4, "dy": -6 },
       "encoding": {
-        "x": {"aggregate": "max", "field": "Year_num"},
-        "y": {"datum": 1.5},
-        "text": {"value": "1.5°C threshold"}
-      }
-    },
-    {
-      "transform": [
-        {"aggregate": [{"op": "argmax", "field": "Anomaly", "as": "maxRec"}]},
-        {"flatten": ["maxRec"]}
-      ],
-      "mark": {"type": "text", "dy": -10, "fontStyle": "italic", "color": "#6A0DAD"},
-      "encoding": {
-        "x": {"field": "maxRec.Year_num", "type": "quantitative"},
-        "y": {"field": "maxRec.Anomaly", "type": "quantitative"},
-        "text": {"value": "Highest recorded"}
+        "x": { "aggregate": "max", "field": "Year_num" },
+        "y": { "datum": 1.5 },
+        "text": { "value": "1.5°C threshold" }
       }
     }
   ]
