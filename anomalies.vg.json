@@ -1,0 +1,86 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Global Temperature Anomalies (°C)",
+  "width": 1000,
+  "height": 420,
+
+  "data": { "url": "anomalies.csv" },
+
+  "params": [
+    {
+      "name": "FromYear",
+      "value": 1850,
+      "bind": {"input": "range", "min": 1850, "max": 2025, "step": 1, "name": " From: "}
+    },
+    {
+      "name": "ToYear",
+      "value": 2025,
+      "bind": {"input": "range", "min": 1850, "max": 2025, "step": 1, "name": " To: "}
+    }
+  ],
+
+  "transform": [
+    {"calculate": "toNumber(datum.Year)", "as": "YearNum"},
+    {"calculate": "toNumber(datum.Anomaly)", "as": "Anom"},
+    {"filter": "datum.YearNum >= FromYear && datum.YearNum <= ToYear"},
+    {
+      "window": [
+        {"op": "mean", "field": "Anom", "as": "MA10"}
+      ],
+      "frame": [-9, 0],
+      "sort": [{"field": "YearNum"}]
+    }
+  ],
+
+  "layer": [
+    { "mark": {"type": "rule", "strokeDash": [4, 4], "opacity": 0.6},
+      "encoding": { "y": {"value": 0} } },
+
+    { "mark": {"type": "line", "interpolate": "monotone"},
+      "encoding": {
+        "x": {"field": "YearNum", "type": "quantitative", "title": "Year", "axis": {"tickCount": 10}},
+        "y": {"field": "Anom", "type": "quantitative", "title": "Temperature anomaly (°C)"},
+        "color": {"value": "#377eb8"}
+      }
+    },
+
+    { "mark": {"type": "line", "strokeWidth": 2},
+      "encoding": {
+        "x": {"field": "YearNum", "type": "quantitative"},
+        "y": {"field": "MA10", "type": "quantitative", "title": null},
+        "color": {"value": "#d62728"}
+      }
+    },
+
+    { "mark": {"type": "circle", "size": 28, "opacity": 0.85},
+      "encoding": {
+        "x": {"field": "YearNum", "type": "quantitative"},
+        "y": {"field": "Anom", "type": "quantitative"},
+        "color": {"value": "#377eb8"},
+        "tooltip": [
+          {"field": "YearNum", "type": "quantitative", "title": "Year"},
+          {"field": "Anom", "type": "quantitative", "format": ".2f", "title": "Anomaly (°C)"},
+          {"field": "MA10", "type": "quantitative", "format": ".2f", "title": "10-yr mean (°C)"}
+        ]
+      }
+    },
+
+    { "transform": [
+        {"window": [{"op": "rank", "as": "r"}], "sort": [{"field": "Anom", "order": "descending"}]},
+        {"filter": "datum.r == 1"},
+        {"calculate": "'Peak: ' + datum.YearNum + ' (' + format(datum.Anom, '.2f') + '°C)'", "as": "label"}
+      ],
+      "layer": [
+        { "mark": {"type": "rule", "strokeDash": [4,4], "opacity": 0.6},
+          "encoding": {"x": {"field": "YearNum", "type": "quantitative"}} },
+        { "mark": {"type": "text", "align": "left", "dx": 6, "dy": -6, "fontStyle": "italic"},
+          "encoding": {
+            "x": {"field": "YearNum", "type": "quantitative"},
+            "y": {"field": "Anom", "type": "quantitative"},
+            "text": {"field": "label"}
+          }
+        }
+      ]
+    }
+  ]
+}
