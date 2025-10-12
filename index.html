@@ -3,22 +3,78 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Freshwater Mammal Distribution</title>
+  <title>FIT3179 Week 10 – Global Temperature Anomalies</title>
+
+  <!-- Vega Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+  <!-- Custom JS -->
   <script src="vega_lite_vis.js"></script>
+
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 24px; background:#fafafa; color:#222; }
-    .container { max-width: 1100px; margin: 0 auto; }
-    h1 { font-size: 1.25rem; margin: 0 0 12px; }
-    #map { background: white; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.08); padding: 12px; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: #fafafa;
+      color: #222;
+      line-height: 1.5;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.2rem;
+    }
+
+    p {
+      margin-bottom: 1.2rem;
+      max-width: 800px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .vis-block {
+      margin-top: 36px;
+      margin-bottom: 36px;
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
-    <h1>Freshwater Mammal Distribution</h1>
-    <div id="map"></div>
+    <h1>Global Climate Change Data Explorer</h1>
+    <p>
+      This page showcases two Vega-Lite visualisations for FIT3179 Week 10.
+      The first shows worldwide freshwater mammal distributions (from Week 9),
+      and the second displays yearly global land & ocean temperature anomalies
+      from 1850 to today. Both include tooltips, filters, and annotations.
+    </p>
+
+    <!-- Visualisation 1 (Week 9 Map) -->
+    <div class="vis-block">
+      <h2>1. Freshwater Mammal Distribution Map</h2>
+      <div id="mammal_map"></div>
+    </div>
+
+    <!-- Visualisation 2 (Week 10 Homework) -->
+    <div class="vis-block">
+      <h2>2. Global Temperature Anomalies (1850 – Present)</h2>
+      <div id="anomalies"></div>
+    </div>
   </div>
+
+  <script>
+    // Embed both charts
+    vegaEmbed("#mammal_map", "vega_lite_vis.js", {actions: {export: true, source: true, editor: true}})
+      .catch(console.error);
+
+    vegaEmbed("#anomalies", "anomalies.vg.json", {actions: {export: true, source: true, editor: true}})
+      .catch(console.error);
+  </script>
 </body>
 </html>
