@@ -1,9 +1,17 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "title": "Mammals — Marine + Terrestrial Ranges",
+  "title": {"text": "Mammals — Marine + Terrestrial Ranges", "fontSize": 16},
+  "description": "TopoJSON of global mammal ranges with legend, filtering, graticule and tooltips.",
   "width": 1000,
   "height": 520,
-  "projection": {"type": "equirectangular"},
+  "projection": {"type": "equalEarth"},
+  "params": [
+    {
+      "name": "status_select",
+      "select": {"type": "point", "fields": ["properties.STATUS"]},
+      "bind": "legend"
+    }
+  ],
   "layer": [
     { "data": {"sphere": true}, "mark": {"type": "geoshape", "fill": "#cfe8ff"} },
     {
@@ -13,22 +21,30 @@
     {
       "data": {
         "url": "https://raw.githubusercontent.com/mmoyann/fit3179-week9-map/main/MAMMALS_MARINE_AND_TERRESTRIAL.json",
-        "format": { "type": "topojson", "feature": "MAMMALS_MARINE_AND_TERRESTRIAL" }
+        "format": {"type": "topojson", "feature": "MAMMALS_MARINE_AND_TERRESTRIAL"}
       },
-      "mark": {"type": "geoshape", "fill": "#ffead1", "stroke": "white", "strokeWidth": 0.4}
-    },
-    {
-      "data": {
-        "url": "https://raw.githubusercontent.com/mmoyann/fit3179-week9-map/main/MAMMALS_MARINE_AND_TERRESTRIAL.json",
-        "format": { "type": "topojson", "feature": "MAMMALS_MARINE_AND_TERRESTRIAL" }
-      },
-      "mark": {"type": "geoshape", "fill": null, "stroke": "#d62828", "strokeWidth": 0.8},
+      "mark": {"type": "geoshape", "stroke": "#b33", "strokeWidth": 0.4},
       "encoding": {
+        "color": {
+          "field": "properties.STATUS",
+          "type": "nominal",
+          "title": "Range type",
+          "legend": {"orient": "bottom", "columns": 3}
+        },
+        "opacity": {
+          "condition": {"param": "status_select", "value": 0.9},
+          "value": 0.25
+        },
         "tooltip": [
           {"field": "properties.NAME", "type": "nominal", "title": "Name"},
-          {"field": "properties.STATUS", "type": "nominal", "title": "Status"}
+          {"field": "properties.STATUS", "type": "nominal", "title": "Range type"}
         ]
       }
     }
-  ]
+  ],
+  "config": {
+    "view": {"stroke": null},
+    "legend": {"titleFont": "Inter", "labelFont": "Inter"},
+    "axis": {"labelFont": "Inter", "titleFont": "Inter"}
+  }
 }
