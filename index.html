@@ -1,24 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Freshwater Mammal Distribution</title>
+  <meta charset="UTF-8" />
+  <title>Global Warming & Mammal Habitats</title>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-  <script src="vega_lite_vis.js"></script>
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 24px; background:#fafafa; color:#222; }
-    .container { max-width: 1100px; margin: 0 auto; }
-    h1 { font-size: 1.25rem; margin: 0 0 12px; }
-    #map { background: white; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.08); padding: 12px; }
-  </style>
 </head>
 <body>
   <div class="container">
-    <h1>Freshwater Mammal Distribution</h1>
-    <div id="map"></div>
+    <h1>Global Warming & Mammal Habitat Ranges</h1>
+    <p>
+      This page combines two visualisations:
+      (1) a map of global mammal ranges and
+      (2) an interactive chart of temperature anomalies showing how climate
+      change affects biodiversity.
+    </p>
+
+    <h2>1️⃣ Mammal Range Map</h2>
+    <div class="chart" id="map"></div>
+
+    <h2>2️⃣ Global Temperature Anomalies (1850–2025)</h2>
+    <div class="chart" id="tempInteractive"></div>
+
+    <footer>
+      Created by [Your Name], 2025 · Data Sources: NOAA GlobalTemp &amp; IUCN Red List
+    </footer>
   </div>
+
+  <script type="text/javascript">
+    vegaEmbed("#mammalsMap", "map.vg.json", {actions: false});
+    vegaEmbed("#tempInteractive", "interactive_chart.json", {actions: false});
+  </script>
 </body>
-</html>s
+</html>
