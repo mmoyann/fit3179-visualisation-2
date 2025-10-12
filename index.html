@@ -18,19 +18,24 @@
       change affects biodiversity.
     </p>
 
-    <h2>1️⃣ Mammal Range Map</h2>
+    <h2>Mammal Range Map</h2>
     <div class="chart" id="map"></div>
+    
+    <p class="note">
+      <strong>How to use:</strong> Click items in the legend to highlight a range type.
+      Hover over outlines for details. Graticule lines are every 30°.
+    </p>
 
-    <h2>2️⃣ Global Temperature Anomalies (1850–2025)</h2>
+    <h2>Global Temperature Anomalies (1850–2025)</h2>
     <div class="chart" id="tempInteractive"></div>
 
     <footer>
-      Created by Adolin Lu, 2025 · Data Sources: NOAA GlobalTemp &amp; IUCN Red List
+      Created by Guoxi (Adolin) Lu, 2025 · Data Sources: NOAA GlobalTemp &amp; IUCN Red List
     </footer>
   </div>
 
   <script type="text/javascript">
-    vegaEmbed("#map", "map.vg.json", {actions: false});
+    vegaEmbed('#mammalsMap', 'map.vg.json', {actions:false});
     vegaEmbed("#tempInteractive", "interactive_chart.json", {actions: false});
   </script>
 </body>
