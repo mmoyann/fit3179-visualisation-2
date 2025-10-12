@@ -1,58 +1,60 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Interactive line chart of global August temperature anomalies (°C, 1850–2025).",
+  "description": "Interactive line: global August temperature anomalies (°C).",
   "width": 700,
   "height": 350,
   "data": {
     "url": "https://raw.githubusercontent.com/mmoyann/fit3179-week9-map/main/data.csv"
   },
+
   "params": [
     {
-      "name": "yearRange",
-      "value": [1850, 2025],
-      "bind": {
-        "input": "range",
-        "min": 1850,
-        "max": 2025,
-        "step": 1,
-        "name": "Select year ≤ "
-      }
+      "name": "minYear",
+      "value": 1850,
+      "bind": {"input": "range", "min": 1850, "max": 2025, "step": 1, "name": "From year: "}
+    },
+    {
+      "name": "maxYear",
+      "value": 2025,
+      "bind": {"input": "range", "min": 1850, "max": 2025, "step": 1, "name": "To year: "}
     }
   ],
+
   "transform": [
-    {"filter": "datum.Year <= yearRange"}
+    {"filter": "datum.Year >= minYear && datum.Year <= maxYear"}
   ],
+
   "layer": [
     {
       "mark": {"type": "line", "strokeWidth": 2},
       "encoding": {
-        "x": {"field": "Year", "type": "temporal", "timeUnit": "year", "title": "Year"},
-        "y": {
-          "field": "Anomaly",
-          "type": "quantitative",
-          "title": "Temperature anomaly (°C)"
-        },
+        "x": {"field": "Year", "type": "quantitative", "title": "Year"},
+        "y": {"field": "Anomaly", "type": "quantitative", "title": "Temperature anomaly (°C)"},
         "tooltip": [
-          {"field": "Year", "type": "temporal", "timeUnit": "year"},
+          {"field": "Year", "type": "quantitative"},
           {"field": "Anomaly", "type": "quantitative", "format": ".2f", "title": "Anomaly (°C)"}
         ]
       }
     },
-    {
-      "mark": {"type": "rule", "strokeDash": [3,3], "color": "#d33"},
-      "encoding": {"y": {"datum": 0}}
-    },
-    {
-      "mark": {"type": "text", "align": "left", "dx": 4, "dy": -6, "color": "#d33"},
+    { "mark": {"type": "rule", "strokeDash": [3,3]}, "encoding": { "y": {"datum": 0} } },
+    { "mark": {"type": "rule", "color": "#c00", "strokeDash": [4,4]},
+      "encoding": { "y": {"datum": 1.5} } },
+    { "mark": {"type": "text", "align": "left", "dx": 4, "dy": -6, "color": "#c00"},
       "encoding": {
         "x": {"aggregate": "max", "field": "Year"},
-        "y": {"aggregate": "max", "field": "Anomaly"},
-        "text": {"value": "2023: record 1.27°C"}
+        "y": {"datum": 1.5},
+        "text": {"value": "1.5°C threshold"}
+      }
+    },
+    {
+      "transform": [{"aggregate": [{"op": "argmax", "field": "Anomaly", "as": "maxRec"}]},
+                    {"flatten": ["maxRec"]}],
+      "mark": {"type": "text", "dy": -10, "fontStyle": "italic"},
+      "encoding": {
+        "x": {"field": "maxRec.Year", "type": "quantitative"},
+        "y": {"field": "maxRec.Anomaly", "type": "quantitative"},
+        "text": {"value": "Highest recorded"}
       }
     }
-  ],
-  "config": {
-    "axis": {"labelFont": "Inter", "titleFont": "Inter"},
-    "legend": {"labelFont": "Inter", "titleFont": "Inter"}
-  }
+  ]
 }
