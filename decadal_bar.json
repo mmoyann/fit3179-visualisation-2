@@ -1,0 +1,41 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Decadal average of global land+ocean temperature anomalies (°C).",
+  "width": 700,
+  "height": 320,
+  "data": {
+    "url": "https://raw.githubusercontent.com/mmoyann/fit3179-week10-map/main/data.csv"
+  },
+  "transform": [
+    { "calculate": "toNumber(datum.Year)", "as": "Year_num" },
+    { "calculate": "floor(datum.Year_num/10)*10", "as": "Decade" },
+    { "aggregate": [{"op": "mean", "field": "Anomaly", "as": "MeanAnom"}], "groupby": ["Decade"] }
+  ],
+  "layer": [
+    {
+      "mark": {"type": "bar", "cornerRadiusTopLeft": 4, "cornerRadiusTopRight": 4},
+      "encoding": {
+        "x": {
+          "field": "Decade",
+          "type": "ordinal",
+          "sort": "ascending",
+          "title": "Decade"
+        },
+        "y": {
+          "field": "MeanAnom",
+          "type": "quantitative",
+          "title": "Average anomaly (°C)"
+        },
+        "tooltip": [
+          {"field": "Decade", "type": "ordinal", "title": "Decade"},
+          {"field": "MeanAnom", "type": "quantitative", "format": ".2f", "title": "Decadal avg (°C)"}
+        ]
+      }
+    },
+    { "mark": {"type": "rule", "strokeDash": [3,3]}, "encoding": { "y": { "datum": 0 } } }
+  ],
+  "config": {
+    "axis": {"labelFont": "Inter", "titleFont": "Inter"},
+    "view": {"stroke": null}
+  }
+}
