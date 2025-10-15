@@ -10,9 +10,6 @@
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 
-  <!-- Custom JS -->
-  <script src="vega_lite_vis.js"></script>
-
   <style>
     body {
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
@@ -22,26 +19,18 @@
       color: #222;
       line-height: 1.5;
     }
-
-    h1 {
-      font-size: 1.5rem;
-      margin-bottom: 0.2rem;
+    h1 { font-size: 1.5rem; margin-bottom: 0.4rem; }
+    h2 { font-size: 1.1rem; margin: 28px 0 12px; }
+    p  { margin-bottom: 1.2rem; max-width: 800px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .vis-block { margin: 36px 0; }
+    .chart {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      padding: 12px;
     }
-
-    p {
-      margin-bottom: 1.2rem;
-      max-width: 800px;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .vis-block {
-      margin-top: 36px;
-      margin-bottom: 36px;
-    }
+    .note { margin: 8px 0 16px; color: #555; font-size: 0.95rem; }
   </style>
 </head>
 
@@ -50,31 +39,48 @@
     <h1>Global Climate Change Data Explorer</h1>
     <p>
       This page showcases two Vega-Lite visualisations for FIT3179 Week 10.
-      The first shows worldwide freshwater mammal distributions (from Week 9),
-      and the second displays yearly global land & ocean temperature anomalies
+      The first shows worldwide mammal distributions (from Week 9),
+      and the second displays yearly global land &amp; ocean temperature anomalies
       from 1850 to today. Both include tooltips, filters, and annotations.
     </p>
 
     <!-- Visualisation 1 (Week 9 Map) -->
     <div class="vis-block">
-      <h2>1. Freshwater Mammal Distribution Map</h2>
-      <div id="mammal_map"></div>
+      <h2>1. Mammal Distribution Map</h2>
+      <div id="mammal_map" class="chart"></div>
+      <p class="note">
+        This map shows the global distribution of mammal habitats by range type (marine, terrestrial, freshwater).
+        Use the legend to highlight a category and hover for details (name, status). The Equal-Earth projection preserves area,
+        improving spatial comparison across regions and coastlines.
+      </p>
     </div>
 
     <!-- Visualisation 2 (Week 10 Homework) -->
     <div class="vis-block">
-      <h2>2. Global Temperature Anomalies (1850 – Present)</h2>
-      <div id="anomalies"></div>
+      <h2>2. Global Temperature Anomalies (1850–Present)</h2>
+      <div id="anomalies" class="chart"></div>
+      <p class="note">
+        The line traces global land–ocean temperature anomalies from 1850 to 2025. Drag the sliders to focus on specific periods.
+        The dashed rules mark the 0&nbsp;°C baseline and the 1.5&nbsp;°C threshold. Hover to see exact values and record years.
+      </p>
+    </div>
+
+    <!-- Visualisation 3 (Decadal Summary) -->
+    <div class="vis-block">
+      <h2>3. Decadal Average Temperature Anomalies</h2>
+      <p class="note">
+        Bars show the average global temperature anomaly for each decade. Values above the dashed line indicate decades
+        warmer than the long-term baseline.
+      </p>
+      <div id="decadeBar" class="chart"></div>
     </div>
   </div>
 
+  <!-- Embed charts -->
   <script>
-    // Embed both charts
-    vegaEmbed("#mammal_map", "vega_lite_vis.js", {actions: {export: true, source: true, editor: true}})
-      .catch(console.error);
-
-    vegaEmbed("#anomalies", "anomalies.vg.json", {actions: {export: true, source: true, editor: true}})
-      .catch(console.error);
+    vegaEmbed("#mammal_map", "map.vg.json", { actions: false }).catch(console.error);
+    vegaEmbed("#anomalies", "interactive_chart.json", { actions: false }).catch(console.error);
+    vegaEmbed("#decadeBar", "decadal_bar.json", { actions: false }).catch(console.error);
   </script>
 </body>
 </html>
