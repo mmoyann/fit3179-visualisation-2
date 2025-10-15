@@ -76,11 +76,23 @@
     </div>
   </div>
 
+    <!-- Visualisation 4 (a Summary) -->
+    <div class="vis-block">
+      <h2>4. Global Living Planet Index (1970 = 1)</h2>
+      <p class="note">
+        Bars show the average global temperature anomaly for each decade. Values above the dashed line indicate decades
+        warmer than the long-term baseline.
+      </p>
+      <div id="lpi_chart"></div>
+    </div>
+  </div>  
   <!-- Embed charts -->
   <script>
     vegaEmbed("#mammal_map", "map.vg.json", { actions: false }).catch(console.error);
     vegaEmbed("#anomalies", "anomalies.vg.json", { actions: false }).catch(console.error);
     vegaEmbed("#decadeBar", "decadal_bar.json", { actions: false }).catch(console.error);
+    vegaEmbed("#lpi_chart", "lpi_chart.vg.json", { actions: false }).catch(console.error);
+
   </script>
 </body>
 </html>
