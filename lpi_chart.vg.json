@@ -1,7 +1,7 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "title": "Global Living Planet Index (1970 = 1)",
-  "width": "container",
+  "width": 1000,
   "height": 420,
 
   "data": { "url": "global-living-planet-index.csv" },
