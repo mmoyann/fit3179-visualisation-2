@@ -1,0 +1,51 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Global Living Planet Index (1970 = 1)",
+  "width": 900,
+  "height": 420,
+
+  "data": { "url": "global-living-planet-index.csv" },
+
+  "transform": [
+    {"filter": "datum.Entity == 'World'"}
+  ],
+
+  "mark": {"type": "line", "interpolate": "monotone", "color": "#2ca02c", "strokeWidth": 2},
+
+  "encoding": {
+    "x": {
+      "field": "Year",
+      "type": "temporal",
+      "title": "Year"
+    },
+    "y": {
+      "field": "Living Planet Index",
+      "type": "quantitative",
+      "title": "Index (1970 = 1)",
+      "scale": {"zero": false}
+    },
+    "tooltip": [
+      {"field": "Year", "type": "temporal"},
+      {"field": "Living Planet Index", "type": "quantitative", "format": ".2f"}
+    ]
+  },
+
+  "layer": [
+    {
+      "mark": {"type": "line", "color": "#2ca02c", "strokeWidth": 2}
+    },
+    {
+      "transform": [
+        {"window": [{"op": "rank", "as": "r"}], "sort": [{"field": "Living Planet Index", "order": "ascending"}]},
+        {"filter": "datum.r == 1"},
+        {"calculate": "'Lowest biodiversity: ' + datum.Year", "as": "label"}
+      ],
+      "mark": {"type": "text", "dx": 6, "dy": -6, "fontStyle": "italic"},
+      "encoding": {
+        "x": {"field": "Year", "type": "temporal"},
+        "y": {"field": "Living Planet Index", "type": "quantitative"},
+        "text": {"field": "label"}
+      }
+    }
+  ]
+}
