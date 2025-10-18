@@ -4,7 +4,7 @@
   "width": 900,
   "height": {"step": 22},
   "data": {
-    "url": "https://raw.githubusercontent.com/mmoyann/fit3179-week10-map/main/global-living-planet-index.csv"
+    "url": "global-living-planet-index.csv"
   },
 
   "params": [
