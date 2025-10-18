@@ -4,7 +4,7 @@
   "width": 700,
   "height": 320,
   "data": {
-    "url": "https://raw.githubusercontent.com/mmoyann/fit3179-week10-map/main/data.csv"
+    "url": "anomalies.csv"
   },
   "transform": [
     { "calculate": "toNumber(datum.Year)", "as": "Year_num" },
