@@ -1,20 +1,30 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Heatmap of Living Planet Index by Year and Region (Entity).",
+  "description": "Heatmap of the Living Planet Index by year and region (1970 = 100).",
   "width": 900,
   "height": {"step": 22},
-  "data": { "url": "global-living-planet-index.csv" },
+
+  "data": {
+    "url": "global-living-planet-index.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "Year": "number",
+        "Living Planet Index": "number"
+      }
+    }
+  },
 
   "params": [
     {
       "name": "minYear",
       "value": 1970,
-      "bind": {"input": "range", "min": 1950, "max": 2025, "step": 1, "name": "From year:"}
+      "bind": {"input": "range", "min": 1950, "max": 2025, "step": 1, "name": "From year: "}
     },
     {
       "name": "maxYear",
       "value": 2025,
-      "bind": {"input": "range", "min": 1950, "max": 2025, "step": 1, "name": "To year:"}
+      "bind": {"input": "range", "min": 1950, "max": 2025, "step": 1, "name": "To year: "}
     },
     {
       "name": "entityFilter",
@@ -24,32 +34,28 @@
   ],
 
   "transform": [
-    { "calculate": "toNumber(datum.Year)", "as": "Year_num" },
-    { "calculate": "isValid(datum['Living Planet Index']) ? toNumber(datum['Living Planet Index']) : null", "as": "Index_num" },
-    { "filter": "isValid(datum.Entity) && isValid(datum.Year_num) && isValid(datum.Index_num)" },
-    { "filter": "datum.Year_num >= minYear && datum.Year_num <= maxYear" },
-    { "filter": "entityFilter == '' || lower(datum.Entity).indexOf(lower(entityFilter)) >= 0" },
-    { "calculate": "(datum.Index_num - 100)", "as": "ChangeFromBaseline" }
+    {"filter": "isValid(datum.Entity) && isValid(datum.Year) && isValid(datum['Living Planet Index'])"},
+    {"filter": "datum.Year >= minYear && datum.Year <= maxYear"},
+    {"filter": "entityFilter == '' || lower(datum.Entity).indexOf(lower(entityFilter)) >= 0"}
   ],
 
   "mark": {"type": "rect"},
 
   "encoding": {
     "x": {
-      "field": "Year_num",
-      "type": "ordinal",
+      "field": "Year",
+      "type": "quantitative",
       "title": "Year",
-      "sort": "ascending",
-      "axis": {"labelAngle": 0, "labelOverlap": true}
+      "axis": {"tickCount": 10}
     },
     "y": {
       "field": "Entity",
       "type": "nominal",
       "title": "Region",
-      "sort": {"op": "mean", "field": "Index_num", "order": "descending"}
+      "sort": {"op": "mean", "field": "Living Planet Index", "order": "descending"}
     },
     "color": {
-      "field": "Index_num",
+      "field": "Living Planet Index",
       "type": "quantitative",
       "title": "Living Planet Index (1970 = 100)",
       "scale": {"scheme": "redyellowgreen", "domain": [50, 150]},
@@ -57,9 +63,8 @@
     },
     "tooltip": [
       {"field": "Entity", "type": "nominal", "title": "Region"},
-      {"field": "Year_num", "type": "quantitative", "title": "Year"},
-      {"field": "Index_num", "type": "quantitative", "format": ".1f", "title": "LPI"},
-      {"field": "ChangeFromBaseline", "type": "quantitative", "format": "+.1f", "title": "Change since 1970"}
+      {"field": "Year", "type": "quantitative", "title": "Year"},
+      {"field": "Living Planet Index", "type": "quantitative", "format": ".1f", "title": "LPI (1970=100)"}
     ]
   },
 
