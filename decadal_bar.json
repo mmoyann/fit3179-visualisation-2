@@ -3,9 +3,8 @@
   "description": "Decadal average of global land+ocean temperature anomalies (°C).",
   "width": 700,
   "height": 320,
-  "data": {
-    "url": "anomalies.csv"
-  },
+  "data": { "url": "anomalies.csv" },
+  
   "transform": [
     { "calculate": "toNumber(datum.Year)", "as": "Year_num" },
     { "calculate": "floor(datum.Year_num/10)*10", "as": "Decade" },
