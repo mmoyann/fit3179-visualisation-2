@@ -98,7 +98,16 @@
         long-term climate changes.
       </p>
     </div>
-
+    <!-- ========== Visualisation 5 ========== -->
+    <div class="vis-block">
+      <h2>6. Living Planet Index Heatmap by Region</h2>
+      <div id="heatmap_lpi" class="chart"></div>
+      <p class="note">
+        Each cell shows the Living Planet Index (1970 = 100) for a region in a given year.
+        Red areas indicate biodiversity decline relative to 1970, while green shows improvement.
+        Use the sliders to filter years or type a region name to focus.
+      </p>
+    </div>
     <footer>
       Data sources: IUCN Red List (mammal ranges), NOAA GlobalTemp (temperature anomalies),
       WWF Living Planet Index. Created with Vega-Lite (2025).
@@ -111,6 +120,7 @@
     vegaEmbed("#anomalies", "anomalies.vg.json", { actions: false }).catch(console.error);
     vegaEmbed("#decadeBar", "decadal_bar.json", { actions: false }).catch(console.error);
     vegaEmbed("#lpi_chart", "lpi_chart.vg.json", { actions: false }).catch(console.error);
+    vegaEmbed("#heatmap_lpi", "heatmap_lpi.json", { actions: false }).catch(console.error);
   </script>
 </body>
 </html>
