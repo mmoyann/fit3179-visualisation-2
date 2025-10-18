@@ -1,43 +1,37 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Heatmap of Living Planet Index by Year and Group (1970 baseline = 1).",
+  "description": "Heatmap of Living Planet Index by Year and Region (Entity).",
   "width": 900,
   "height": {"step": 22},
   "data": {
     "url": "https://raw.githubusercontent.com/mmoyann/fit3179-week10-map/main/global-living-planet-index.csv"
   },
 
-  "transform": [
-    { "calculate": "toNumber(datum.Year)", "as": "Year_num" },
-    { "calculate": "isValid(datum.Index) ? toNumber(datum.Index) : null", "as": "Index_num" },
-    { "filter": "isValid(datum.Group) && isValid(datum.Year_num) && isValid(datum.Index_num)" }
-  ],
-
   "params": [
     {
       "name": "minYear",
       "value": 1970,
-      "bind": {"input": "range", "min": 1950, "max": 2025, "step": 1, "name": "From: "}
+      "bind": {"input": "range", "min": 1950, "max": 2025, "step": 1, "name": "From year:"}
     },
     {
       "name": "maxYear",
       "value": 2025,
-      "bind": {"input": "range", "min": 1950, "max": 2025, "step": 1, "name": "To: "}
+      "bind": {"input": "range", "min": 1950, "max": 2025, "step": 1, "name": "To year:"}
     },
     {
-      "name": "groupFilter",
+      "name": "entityFilter",
       "value": "",
-      "bind": {"input": "text", "name": "Filter group (optional): "}
+      "bind": {"input": "text", "name": "Filter region (optional): "}
     }
   ],
 
   "transform": [
     { "calculate": "toNumber(datum.Year)", "as": "Year_num" },
-    { "calculate": "isValid(datum.Index) ? toNumber(datum.Index) : null", "as": "Index_num" },
-    { "filter": "isValid(datum.Group) && isValid(datum.Year_num) && isValid(datum.Index_num)" },
+    { "calculate": "isValid(datum['Living Planet Index']) ? toNumber(datum['Living Planet Index']) : null", "as": "Index_num" },
+    { "filter": "isValid(datum.Entity) && isValid(datum.Year_num) && isValid(datum.Index_num)" },
     { "filter": "datum.Year_num >= minYear && datum.Year_num <= maxYear" },
-    { "filter": "groupFilter == '' || lower(datum.Group).indexOf(lower(groupFilter)) >= 0" },
-    { "calculate": "(datum.Index_num - 1) * 100", "as": "ChangePct" }
+    { "filter": "entityFilter == '' || lower(datum.Entity).indexOf(lower(entityFilter)) >= 0" },
+    { "calculate": "(datum.Index_num - 100)", "as": "ChangeFromBaseline" }
   ],
 
   "mark": {"type": "rect"},
@@ -51,23 +45,23 @@
       "axis": {"labelAngle": 0, "labelOverlap": true}
     },
     "y": {
-      "field": "Group",
+      "field": "Entity",
       "type": "nominal",
-      "title": "Group",
+      "title": "Region",
       "sort": {"op": "mean", "field": "Index_num", "order": "descending"}
     },
     "color": {
       "field": "Index_num",
       "type": "quantitative",
-      "title": "LPI (1970 = 1)",
-      "scale": {"scheme": "redyellowgreen"}, 
+      "title": "Living Planet Index (1970 = 100)",
+      "scale": {"scheme": "redyellowgreen", "domain": [50, 150]},
       "legend": {"orient": "right"}
     },
     "tooltip": [
-      {"field": "Group", "type": "nominal", "title": "Group"},
+      {"field": "Entity", "type": "nominal", "title": "Region"},
       {"field": "Year_num", "type": "quantitative", "title": "Year"},
-      {"field": "Index_num", "type": "quantitative", "format": ".2f", "title": "LPI"},
-      {"field": "ChangePct", "type": "quantitative", "format": "+.1f", "title": "Change vs 1970 (%)"}
+      {"field": "Index_num", "type": "quantitative", "format": ".1f", "title": "LPI"},
+      {"field": "ChangeFromBaseline", "type": "quantitative", "format": "+.1f", "title": "Change since 1970"}
     ]
   },
 
