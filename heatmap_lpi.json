@@ -3,9 +3,7 @@
   "description": "Heatmap of Living Planet Index by Year and Region (Entity).",
   "width": 900,
   "height": {"step": 22},
-  "data": {
-    "url": "global-living-planet-index.csv"
-  },
+  "data": { "url": "global-living-planet-index.csv" },
 
   "params": [
     {
