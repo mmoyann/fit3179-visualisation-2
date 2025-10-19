@@ -4,7 +4,7 @@
   "width": 1000,
   "height": 520,
 
-  "projection": { "type": "equalEarth" },
+  "projection": { "type": "equirectangular" },
 
   "params": [
     {
