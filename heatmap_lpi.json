@@ -5,7 +5,7 @@
   "height": { "step": 22 },
 
   "data": {
-    "url": "global-living-planet-index.csv",
+    "url": "https://raw.githubusercontent.com/mmoyann/fit3179-week9-map/main/global-living-planet-index.csv",
     "format": {
       "type": "csv",
       "parse": { "Year": "number", "Living Planet Index": "number" }
