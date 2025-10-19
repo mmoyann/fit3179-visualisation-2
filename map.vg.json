@@ -23,7 +23,7 @@
 
     {
       "data": {
-        "url": "https://raw.githubusercontent.com/mmoyann/fit3179-week9-map/main/MAMMALS_MARINE_AND_TERRESTRIAL.json",
+        "url": "https://raw.githubusercontent.com/mmoyann/fit3179-week10-map/main/MAMMALS_MARINE_AND_TERRESTRIAL.json",
         "format": { "type": "topojson", "feature": "MAMMALS_MARINE_AND_TERRESTRIAL" }
       },
       "mark": { "type": "geoshape", "fill": "#ffead1", "stroke": "white", "strokeWidth": 0.4 },
