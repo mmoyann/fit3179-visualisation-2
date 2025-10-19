@@ -3,57 +3,71 @@
   "title": "Global Living Planet Index (1970 = 1)",
   "width": 1000,
   "height": 420,
+
   "data": { "url": "global-living-planet-index.csv" },
 
   "params": [
-    { "name": "FromYear", "value": 1970,
-      "bind": {"input":"range","min":1970,"max":2020,"step":1,"name":"From year: "} },
-    { "name": "hover", "select": { "type": "point", "fields": ["YearNum"], "nearest": true, "on": "pointerover", "clear": "pointerout" } }
-  ],
-
-  "transform": [
-    {"filter":"datum.Entity == 'World'"},
-    {"calculate":"toNumber(datum.Year)","as":"YearNum"},
-    {"filter":"datum.YearNum >= FromYear"},
-    {"calculate":"toNumber(datum['Living Planet Index'])","as":"LPI"},
-    {"calculate":"datum.LPI * 100","as":"LPI_1970eq100"},
-    {"calculate":"'Year: ' + toString(datum.YearNum) + ' — ' + format(datum.LPI_1970eq100, '.0f')","as":"hoverLabel"}
-  ],
-
-  "layer": [
-    { "mark": {"type":"rule","strokeDash":[4,4],"opacity":0.5}, "encoding": { "y": {"value": 100 } } },
-
-    { "mark": {"type":"line","strokeWidth":2,"color":"#2ca02c"},
-      "encoding": {
-        "x": {"field":"YearNum","type":"quantitative","title":"Year","axis":{"tickCount":10}},
-        "y": {"field":"LPI_1970eq100","type":"quantitative","title":"Index (1970 = 100)","scale":{"zero":false}}
-      }
+    {
+      "name": "FromYear",
+      "value": 1970,
+      "bind": { "input": "range", "min": 1970, "max": 2020, "step": 1, "name": "From year: " }
     },
-
-    { "mark": {"type":"circle","size":36,"opacity":0.85,"color":"#2ca02c"},
-      "encoding": {
-        "x": {"field":"YearNum","type":"quantitative"},
-        "y": {"field":"LPI_1970eq100","type":"quantitative"},
-        "opacity": {"condition":{"param":"hover","value":1},"value":0.1},
-        "tooltip": [
-          {"field":"YearNum","title":"Year"},
-          {"field":"LPI","type":"quantitative","format":".3f","title":"Index (1970 = 1)"},
-          {"field":"LPI_1970eq100","type":"quantitative","format":".0f","title":"Index (1970 = 100)"}
-        ]
-      },
-      "params":[{"name":"hover"}]
-    },
-
-    { "transform":[{"filter":{"param":"hover"}}],
-      "mark":{"type":"rule","strokeDash":[4,4],"opacity":0.5},
-      "encoding":{"x":{"field":"YearNum","type":"quantitative"}}
-    },
-
-    { "transform":[{"filter":{"param":"hover"}}],
-      "mark":{"type":"text","dx":6,"dy":-6,"fontStyle":"italic"},
-      "encoding":{"x":{"field":"YearNum"},"y":{"field":"LPI_1970eq100"},"text":{"field":"hoverLabel"}}
+    {
+      "name": "hover",
+      "select": { "type": "point", "fields": ["YearNum"], "nearest": true, "on": "pointerover", "clear": "pointerout" }
     }
   ],
 
-  "config": { "axis": {"labelFont": "Inter", "titleFont": "Inter"}, "view": {"stroke": null} }
+
+  "transform": [
+    {"filter": "datum.Entity == 'World'"},
+    {"calculate": "toNumber(datum.Year)", "as": "YearNum"},
+    {"filter": "datum.YearNum >= FromYear && datum.YearNum <= ToYear"},
+    {"calculate": "toNumber(datum['Living Planet Index'])", "as": "LPI"},
+    {"calculate": "datum.LPI * 100", "as": "LPI_1970eq100"}
+  ],
+
+  "layer": [
+    { "mark": {"type": "rule", "strokeDash": [4,4], "opacity": 0.5},
+      "encoding": { "y": {"value": 100} } },
+
+    { "mark": {"type": "line", "interpolate": "monotone", "strokeWidth": 2},
+      "encoding": {
+        "x": {"field": "YearNum", "type": "quantitative", "title": "Year", "axis": {"tickCount": 10}},
+        "y": {"field": "LPI_1970eq100", "type": "quantitative", "title": "Index (1970 = 100)", "scale": {"zero": false}},
+        "color": {"value": "#2ca02c"}
+      }
+    },
+
+    { "mark": {"type": "circle", "size": 28, "opacity": 0.85},
+      "encoding": {
+        "x": {"field": "YearNum", "type": "quantitative"},
+        "y": {"field": "LPI_1970eq100", "type": "quantitative"},
+        "color": {"value": "#2ca02c"},
+        "tooltip": [
+          {"field": "YearNum", "type": "quantitative", "title": "Year"},
+          {"field": "LPI", "type": "quantitative", "format": ".2f", "title": "Index (1970=1)"},
+          {"field": "LPI_1970eq100", "type": "quantitative", "format": ".0f", "title": "Index (1970=100)"}
+        ]
+      }
+    },
+
+    { "transform": [
+        {"window": [{"op": "rank", "as": "r"}], "sort": [{"field": "LPI_1970eq100", "order": "ascending"}]},
+        {"filter": "datum.r == 1"},
+        {"calculate": "'Lowest biodiversity: ' + datum.YearNum", "as": "label"}
+      ],
+      "layer": [
+        { "mark": {"type": "rule", "strokeDash": [4,4], "opacity": 0.5},
+          "encoding": { "x": {"field": "YearNum"} } },
+        { "mark": {"type": "text", "align": "left", "dx": 6, "dy": -6, "fontStyle": "italic"},
+          "encoding": {
+            "x": {"field": "YearNum"},
+            "y": {"field": "LPI_1970eq100"},
+            "text": {"field": "label"}
+          }
+        }
+      ]
+    }
+  ]
 }
