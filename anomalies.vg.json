@@ -37,15 +37,29 @@
     {
       "mark": { "type": "line", "interpolate": "monotone", "color": "#377eb8" },
       "encoding": {
-        "x": { "field": "YearNum", "type": "quantitative", "title": "Year", "axis": { "tickCount": 10 } },
-        "y": { "field": "Anom", "type": "quantitative", "title": "Temperature anomaly (°C)" }
+        "x": {
+          "field": "YearNum",
+          "type": "quantitative",
+          "title": "Year",
+          "axis": { "tickCount": 10 }
+        },
+        "y": {
+          "field": "Anom",
+          "type": "quantitative",
+          "title": "Temperature Anomaly (°C)",
+          "axis": { "titleFontWeight": "bold", "labelFont": "Inter" }
+        }
       }
     },
     {
       "mark": { "type": "line", "strokeWidth": 2, "color": "#d62728" },
       "encoding": {
         "x": { "field": "YearNum", "type": "quantitative" },
-        "y": { "field": "MA10", "type": "quantitative", "title": null }
+        "y": {
+          "field": "MA10",
+          "type": "quantitative",
+          "title": null
+        }
       }
     },
     {
