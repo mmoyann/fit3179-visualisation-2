@@ -4,200 +4,155 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="An interactive data story revealing how global warming and biodiversity loss are connected — from temperature anomalies to the Living Planet Index.">
-  <title>Degrees of Decline – Global Warming & Biodiversity Loss</title>
+
+  <title>Global Climate Change Data Explorer – FIT3179 Week 10</title>
 
   <!-- Vega Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 
+  <!-- ===== Styling ===== -->
   <style>
     :root{
       --bg:#fafafa; --card:#fff; --ink:#222; --muted:#555; --border:#ddd;
-      --brand:#5b48f0; --brand-ink:#2a245c; --focus:#ffbf47;
-      --radius:16px; --shadow:0 2px 16px rgba(0,0,0,.08);
-      --maxw:1100px;
+      --radius:12px; --shadow:0 2px 16px rgba(0,0,0,0.08);
+      --gap:72px; --gap-sm:56px; --wrap:1100px;
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-    a{color:var(--brand)} a:hover{color:var(--brand-ink)}
-
-    /* Skip link for a11y */
-    .skip-link{position:absolute;left:-9999px;top:auto}
-    .skip-link:focus{left:12px;top:12px;z-index:1000;background:#000;color:#fff;padding:8px 12px;border-radius:8px}
-
-    header{background:linear-gradient(180deg,#fff,transparent);border-bottom:1px solid var(--border)}
-    .wrap{max-width:var(--maxw);margin:0 auto;padding:20px 24px}
-    h1{margin:0 0 6px;font-size:clamp(1.5rem,2.4vw,2.1rem)}
-    .lede{max-width:850px;color:var(--muted);margin:8px 0 0}
-
-    /* Sticky section nav */
-    nav.toc{
-      position:sticky; top:0; z-index:50; background:rgba(250,250,250,.9);
-      backdrop-filter:saturate(180%) blur(6px); border-bottom:1px solid var(--border)
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      margin: 0; padding: 24px; background: var(--bg); color: var(--ink); line-height: 1.55;
     }
-    .toc .wrap{display:flex;gap:12px;flex-wrap:wrap}
-    .toc a{padding:8px 10px;border-radius:999px;background:#fff;border:1px solid var(--border);text-decoration:none}
-    .toc a:focus{outline:3px solid var(--focus);outline-offset:2px}
-
-    main{max-width:var(--maxw);margin:0 auto;padding:20px 24px}
-    section{scroll-margin-top:72px}
-    .vis-block{margin:32px 0}
-    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px}
-    h2{font-size:clamp(1.15rem,2vw,1.4rem);margin:0 0 12px}
-    .note{margin:10px 2px 0;color:var(--muted);font-size:0.97rem;max-width:900px}
-
-    /* Footer */
-    footer{border-top:1px solid var(--border);margin-top:36px;padding:14px 24px;color:#666;text-align:center}
-
-    /* Mobile tweaks */
-    @media (max-width:760px){
-      .wrap{padding:16px}
-      .toc .wrap{gap:8px}
-      .toc a{padding:6px 9px}
-      .card{padding:8px}
+    .container { max-width: var(--wrap); margin: 0 auto; }
+    h1 { font-size: 1.6rem; margin: 0 0 0.4rem; }
+    h2 { font-size: 1.25rem; margin: 0 0 12px; }
+    p  { margin: 0 0 1rem; max-width: 900px; }
+    .vis-block { margin: var(--gap) 0; }
+    .chart {
+      background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 12px;
     }
+    .note { margin: 12px 2px 0; color: var(--muted); font-size: 0.97rem; max-width: 900px; }
+    .conclusion {
+      background: #fff; border-left: 4px solid #2ca02c; border-radius: 10px;
+      box-shadow: var(--shadow); padding: 18px 20px; margin-top: 10px;
+    }
+    footer {
+      border-top: 1px solid #ccc; margin-top: var(--gap); padding-top: 10px;
+      text-align: center; font-size: 0.9rem; color: #666;
+    }
+    @media (max-width: 760px){
+      body{padding:16px}
+      .vis-block{margin: var(--gap-sm) 0}
+      .chart{padding:10px}
+    }
+    /* Anchor offset so headings aren't hidden under browser UI */
+    section{scroll-margin-top:96px}
   </style>
-  <style>
-  /* --- Better vertical rhythm & breathing room --- */
-  .vis-block { 
-    margin-block: 72px;            /* was ~36px; doubles the space between sections */
-  }
-  .chart { 
-    padding: 16px;                 /* a touch more inner space inside the card */
-  }
-  h2 { 
-    margin: 0 0 16px;              /* add a bit more gap from the title to the chart */
-  }
-  .note { 
-    margin-top: 14px;              /* more space between chart and note */
-  }
-  footer { 
-    margin-top: 64px;              /* lift footer off last chart */
-  }
-
-  /* Avoid sticky header overlap when linking to #anchors */
-  section { 
-    scroll-margin-top: 96px;       /* ensures titles aren't hidden under the top bar */
-  }
-
-  /* Mobile: slightly tighter but still airy */
-  @media (max-width: 760px) {
-    .vis-block { margin-block: 56px; }
-    .chart { padding: 12px; }
-    h2 { margin-bottom: 12px; }
-    .note { margin-top: 12px; }
-  }
-</style>
-
 </head>
+
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="container">
+    <h1>Degrees of Decline: Visualising Earth’s Warming and Biodiversity Loss</h1>
+    <p class="intro">
+      A planet in change. As global temperatures climb higher than ever recorded, wildlife populations are plummeting. 
+      This interactive data story visualises how a warming world reshapes life on Earth — from shrinking mammal habitats 
+      to the sharp decline in global biodiversity.
+    </p>
 
-  <header>
-    <div class="wrap">
-      <h1>Degrees of Decline: Visualising Earth’s Warming & Biodiversity Loss</h1>
-      <p class="lede">
-        As global temperatures rise, wildlife populations fall. This interactive story links
-        <em>temperature anomalies</em> to the <em>Living Planet Index</em> to show how climate change
-        and habitat pressures reshape life on Earth.
-      </p>
-    </div>
-  </header>
-
-  <!-- Sticky in-page navigation -->
-  <nav class="toc" aria-label="Section navigation">
-    <div class="wrap">
-      <a href="#map">Mammal ranges</a>
-      <a href="#anoms">Temp anomalies</a>
-      <a href="#decades">Decadal averages</a>
-      <a href="#lpi">LPI (1970=100)</a>
-      <a href="#heat">LPI by region</a>
-    </div>
-  </nav>
-
-  <main id="main">
-    <!-- 1. Map -->
-    <section id="map" aria-labelledby="h-map">
-      <h2 id="h-map">1. Global Mammal Distribution Map</h2>
-      <div id="mammal_map" class="card" role="img" aria-label="Map of mammal marine and terrestrial ranges"></div>
+    <!-- ========== Visualisation 1 ========== -->
+    <section class="vis-block" id="map">
+      <h2>1. Global Mammal Distribution Map</h2>
+      <div id="mammal_map" class="chart" role="img" aria-label="Map of mammal marine and terrestrial ranges"></div>
       <p class="note">
-        This map uses an Equal-Earth projection to show marine and terrestrial mammal ranges at a glance.
-        Hover to reveal attributes from the dataset (species/range properties and status). Seeing where species live
-        and migrate provides spatial context for the climate and biodiversity trends below.
+        This map visualises the combined marine and terrestrial ranges of mammals using the Equal-Earth projection, which preserves area for fair spatial comparison. 
+        It grounds the climate-and-biodiversity narrative in <em>place</em>: where species live, migrate and overlap with human activity. 
+        Hover to reveal detailed attributes from the source dataset (species/range properties, status fields, and more). Seeing the spatial footprint of mammals
+        helps explain why warming oceans, shifting coastlines, and habitat fragmentation directly translate into population declines shown later.
       </p>
     </section>
 
-    <!-- 2. Anomalies -->
-    <section id="anoms" aria-labelledby="h-anoms">
-      <h2 id="h-anoms">2. Global Temperature Anomalies (1850–2025)</h2>
-      <div id="anomalies" class="card" aria-label="Interactive line chart of temperature anomalies since 1850"></div>
+    <!-- ========== Visualisation 2 ========== -->
+    <section class="vis-block" id="anoms">
+      <h2>2. Global Temperature Anomalies (1850 – 2025)</h2>
+      <div id="anomalies" class="chart" aria-label="Interactive line chart of global temperature anomalies"></div>
       <p class="note">
-        Yearly fluctuations (blue) sit atop a rising 10-year mean (red). Use the single slider to move the start year and
-        see how warming accelerates after the mid-20th century. The 1.5 °C line marks the Paris goal; sustained overshoot
-        increases the odds of heatwaves, droughts and marine heat spikes that erode habitat quality and resilience.
+        This chart tracks how Earth’s average land–ocean temperature has shifted since 1850, showing yearly fluctuations and a smoothed trend. 
+        The single slider lets you explore how the climate evolved through industrialisation, the post-war boom and the recent acceleration. 
+        The continuous rise above the 0 °C baseline—and the approach toward the 1.5 °C Paris threshold—illustrates the rapid pace of anthropogenic warming. 
+        Even small average increases amplify extremes that stress ecosystems and erode habitat quality.
       </p>
     </section>
 
-    <!-- 3. Decadal bar -->
-    <section id="decades" aria-labelledby="h-decades">
-      <h2 id="h-decades">3. Decadal Average Temperature Anomalies</h2>
-      <div id="decadeBar" class="card" aria-label="Diverging bar chart of decadal mean anomalies"></div>
+    <!-- ========== Visualisation 3 ========== -->
+    <section class="vis-block" id="decades">
+      <h2>3. Decadal Average Temperature Anomalies</h2>
+      <div id="decadeBar" class="chart" aria-label="Diverging bar chart of decadal average anomalies"></div>
       <p class="note">
-        Each bar shows a decade’s average anomaly. A scale centred at 0 makes the regime shift obvious:
-        mostly cooler decades before mid-century, then persistent warming from the 1980s onward. Warmer baselines
-        raise the floor for extremes, compounding habitat stress and pushing ecosystems beyond recovery windows.
+        Each bar summarises a decade’s average anomaly. A scale centred at 0 makes the regime shift obvious:
+        mostly cooler decades before mid-century, then persistent warming from the 1980s onward. Warmer baselines raise
+        the floor for heatwaves and marine heat spikes, compounding habitat stress and pushing ecosystems beyond recovery windows.
       </p>
     </section>
 
-    <!-- 4. LPI line -->
-    <section id="lpi" aria-labelledby="h-lpi">
-      <h2 id="h-lpi">4. Global Living Planet Index (1970 = 1)</h2>
-      <div id="lpi_chart" class="card" aria-label="Interactive line chart of global LPI, index 1970 equals 100"></div>
+    <!-- ========== Visualisation 4 ========== -->
+    <section class="vis-block" id="lpi">
+      <h2>4. Global Living Planet Index (1970 = 1)</h2>
+      <div id="lpi_chart" class="chart" aria-label="Interactive line chart of global LPI (1970=100)"></div>
       <p class="note">
-        The Living Planet Index tracks vertebrate population abundance worldwide (1970 = 100). Drag the single slider to set
-        a start year and observe the sustained decline to ~40–60 in recent years—evidence that average population levels
-        are far below 1970. Read with warming above: chronic thermal stress and land-use change reduce habitat quality,
-        fragmentation increases, and resilience falls.
+        The Living Planet Index (LPI) tracks vertebrate population abundance worldwide, normalised to 1970. 
+        Using the single slider to adjust the start year reveals a sustained decline since the 1970s — evidence that average population levels are far below baseline.
+        Read together with rising temperature anomalies, this points to a climate system that increasingly drives habitat loss, fragmentation and lower ecological resilience.
       </p>
     </section>
 
-    <!-- 5. Region heatmap -->
-    <section id="heat" aria-labelledby="h-heat">
-      <h2 id="h-heat">5. Living Planet Index Heatmap by Region</h2>
-      <div id="heatmap_lpi" class="card" aria-label="Heatmap of LPI by region and year"></div>
+    <!-- ========== Visualisation 5 ========== -->
+    <section class="vis-block" id="heat">
+      <h2>5. Living Planet Index Heatmap by Region</h2>
+      <div id="heatmap_lpi" class="chart" aria-label="Heatmap of Living Planet Index by region and year"></div>
       <p class="note">
-        Each cell shows LPI (1970 = 100) for a region and year. Persistent reds across many regions underline the global
-        nature of biodiversity loss. As populations shrink, habitats lose key functions (pollination, carbon storage),
-        driving cascading ecosystem impacts and feedbacks with climate. 
+        Each cell shows the Living Planet Index (1970 = 100) for a region in a given year. 
+        Persistent red tones across multiple regions highlight widespread biodiversity decline. 
+        As populations shrink, habitats lose key functions — pollination, soil renewal and carbon storage — creating feedbacks that further weaken ecosystems.
       </p>
     </section>
 
-    <section aria-label="Sources and methods">
-      <h2>Sources & Methods</h2>
-      <p class="note">
-        Data: NOAA GlobalTemp anomalies (land–ocean), WWF Living Planet Index, IUCN ranges. Visuals built with Vega-Lite.
-        Anomalies include a 10-yr moving average; LPI converted to 1970=100 for readability. Author: Adolin Lu 33905460.
-      </p>
+    <!-- ========== Summary & Conclusion ========== -->
+    <section class="vis-block" id="summary">
+      <h2>Summary & Conclusion</h2>
+      <div class="conclusion">
+        <p>
+          Taken together, these visualisations tell a consistent story. Global temperatures have shifted into a sustained
+          warm regime, with recent decades well above the long-term average. Over the same period, the Living Planet Index
+          shows a broad, persistent decline in vertebrate populations. Warmer baselines amplify extremes (heatwaves,
+          droughts and marine heat events), while land-use change and fragmentation reduce habitat quality and the capacity
+          of ecosystems to recover between shocks. The outcome is fewer animals in fewer places — and habitats that perform
+          fewer ecological services.
+        </p>
+        <p>
+          The implication is clear: climate mitigation (rapid emissions reduction) and adaptation (protecting and restoring
+          connected habitats) are complementary. Slowing the rise in anomalies reduces the frequency of damaging extremes,
+          while safeguarding corridors and high-value ecosystems helps populations persist. Data-driven policy that links
+          climate targets with biodiversity protection offers the strongest path to stabilising both the climate and the
+          habitats life depends on.
+        </p>
+      </div>
     </section>
-  </main>
 
-  <footer>
-    © 2025 • Built with Vega-Lite • Accessibility: keyboard focusable nav, high-contrast focus, ARIA labels.
-  </footer>
+    <footer>
+      Data sources: IUCN Red List (mammal ranges), NOAA GlobalTemp (temperature anomalies),
+      WWF Living Planet Index. Visuals created with Vega-Lite (2025). Author: Adolin Lu 33905460.
+    </footer>
+  </div>
 
   <!-- ===== Embed Charts ===== -->
   <script>
-    // Map / Charts — filenames match your repo
-    vegaEmbed("#mammal_map", "map.vg.json", { actions: false }).catch(console.error);          // :contentReference[oaicite:15]{index=15}
-    vegaEmbed("#anomalies", "anomalies.vg.json", { actions: false }).catch(console.error);     // :contentReference[oaicite:16]{index=16}
-    vegaEmbed("#decadeBar", "decadal_bar.json", { actions: false }).catch(console.error);      // :contentReference[oaicite:17]{index=17}
-    vegaEmbed("#lpi_chart", "lpi_chart.vg.json", { actions: false }).catch(console.error);     // :contentReference[oaicite:18]{index=18}
-
-    // Heatmap: use your existing spec (or swap to the super-simple version if you like)
-    // v1 (your interactive): "heatmap_lpi.json"  • v2 (robust/minimal): "heatmap_simple.json"
-    vegaEmbed("#heatmap_lpi", "heatmap_lpi.json", { actions: false }).catch(console.error);    // :contentReference[oaicite:19]{index=19}
+    vegaEmbed("#mammal_map", "map.vg.json", { actions: false }).catch(console.error);
+    vegaEmbed("#anomalies", "anomalies.vg.json", { actions: false }).catch(console.error);
+    vegaEmbed("#decadeBar", "decadal_bar.json", { actions: false }).catch(console.error);
+    vegaEmbed("#lpi_chart", "lpi_chart.vg.json", { actions: false }).catch(console.error);
+    vegaEmbed("#heatmap_lpi", "heatmap_lpi.json", { actions: false }).catch(console.error);
   </script>
 </body>
 </html>
