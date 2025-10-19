@@ -59,6 +59,38 @@
       .card{padding:8px}
     }
   </style>
+  <style>
+  /* --- Better vertical rhythm & breathing room --- */
+  .vis-block { 
+    margin-block: 72px;            /* was ~36px; doubles the space between sections */
+  }
+  .chart { 
+    padding: 16px;                 /* a touch more inner space inside the card */
+  }
+  h2 { 
+    margin: 0 0 16px;              /* add a bit more gap from the title to the chart */
+  }
+  .note { 
+    margin-top: 14px;              /* more space between chart and note */
+  }
+  footer { 
+    margin-top: 64px;              /* lift footer off last chart */
+  }
+
+  /* Avoid sticky header overlap when linking to #anchors */
+  section { 
+    scroll-margin-top: 96px;       /* ensures titles aren't hidden under the top bar */
+  }
+
+  /* Mobile: slightly tighter but still airy */
+  @media (max-width: 760px) {
+    .vis-block { margin-block: 56px; }
+    .chart { padding: 12px; }
+    h2 { margin-bottom: 12px; }
+    .note { margin-top: 12px; }
+  }
+</style>
+
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
