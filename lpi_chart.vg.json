@@ -16,38 +16,59 @@
 
   "transform": [
     { "filter": "datum.Entity == 'World'" },
-    { "filter": "isValid(datum.Year) && isValid(datum['Living Planet Index'])" },
     { "calculate": "toNumber(datum.Year)", "as": "YearNum" },
-    { "calculate": "toNumber(datum['Living Planet Index'])", "as": "LPI100" },
-    { "filter": "datum.YearNum >= FromYear" }
+    { "filter": "datum.YearNum >= FromYear" },
+    { "calculate": "toNumber(datum['Living Planet Index'])", "as": "LPI" },
+    { "calculate": "datum.LPI * 100", "as": "LPI_1970eq100" }
   ],
-
-  "encoding": {
-    "x": { "field": "YearNum", "type": "quantitative", "title": "Year", "axis": { "tickCount": 10 } },
-    "y": {
-      "field": "LPI100",
-      "type": "quantitative",
-      "title": "Index (1970 = 100)",
-      "scale": { "zero": false }
-    }
-  },
 
   "layer": [
-    { "mark": { "type": "rule", "strokeDash": [4, 4], "opacity": 0.5 }, "encoding": { "y": { "value": 100 } } },
-    { "mark": { "type": "line", "strokeWidth": 2, "color": "#2ca02c" } },
     {
-      "mark": { "type": "point", "filled": true, "size": 36, "opacity": 0.85, "color": "#2ca02c" },
+      "mark": { "type": "rule", "strokeDash": [4, 4], "opacity": 0.5 },
+      "encoding": { "y": { "value": 100 } }
+    },
+
+    {
+      "mark": { "type": "line", "interpolate": "monotone", "strokeWidth": 2 },
       "encoding": {
+        "x": { "field": "YearNum", "type": "quantitative", "title": "Year", "axis": { "tickCount": 10 } },
+        "y": { "field": "LPI_1970eq100", "type": "quantitative", "title": "Index (1970 = 100)", "scale": { "zero": false } },
+        "color": { "value": "#2ca02c" }
+      }
+    },
+
+    {
+      "mark": { "type": "circle", "size": 28, "opacity": 0.85 },
+      "encoding": {
+        "x": { "field": "YearNum", "type": "quantitative" },
+        "y": { "field": "LPI_1970eq100", "type": "quantitative" },
+        "color": { "value": "#2ca02c" },
         "tooltip": [
-          { "field": "YearNum", "title": "Year" },
-          { "field": "LPI100", "type": "quantitative", "format": ".0f", "title": "Index (1970 = 100)" }
+          { "field": "YearNum", "type": "quantitative", "title": "Year" },
+          { "field": "LPI", "type": "quantitative", "format": ".2f", "title": "Index (1970=1)" },
+          { "field": "LPI_1970eq100", "type": "quantitative", "format": ".0f", "title": "Index (1970=100)" }
         ]
       }
-    }
-  ],
+    },
 
-  "config": {
-    "view": { "stroke": null },
-    "axis": { "labelFont": "Inter", "titleFont": "Inter" }
-  }
+    {
+      "transform": [
+        { "window": [{ "op": "rank", "as": "r" }], "sort": [{ "field": "LPI_1970eq100", "order": "ascending" }] },
+        { "filter": "datum.r == 1" },
+        { "calculate": "'Lowest biodiversity: ' + datum.YearNum", "as": "label" }
+      ],
+      "layer": [
+        {
+          "mark": { "type": "rule", "strokeDash": [4, 4], "opacity": 0.5 },
+          "encoding": { "x": { "field": "YearNum" } }
+        },
+        {
+          "mark": { "type": "text", "align": "left", "dx": 6, "dy": -6, "fontStyle": "italic" },
+          "encoding": {
+            "text": { "field": "label" }
+          }
+        }
+      ]
+    }
+  ]
 }
