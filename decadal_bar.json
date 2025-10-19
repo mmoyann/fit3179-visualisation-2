@@ -1,16 +1,32 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "Decadal average of global land+ocean temperature anomalies (°C).",
-  "width": 700,
-  "height": 320,
+  "width": 900,
+  "height": 360,
+
   "data": { "url": "anomalies.csv" },
-  
+
+  "params": [
+    {
+      "name": "hover",
+      "select": { "type": "point", "fields": ["Decade"], "on": "pointerover", "clear": "pointerout" }
+    }
+  ],
+
   "transform": [
     { "calculate": "toNumber(datum.Year)", "as": "Year_num" },
     { "calculate": "floor(datum.Year_num/10)*10", "as": "Decade" },
-    { "aggregate": [{"op": "mean", "field": "Anomaly", "as": "MeanAnom"}], "groupby": ["Decade"] }
+    { "aggregate": [{"op": "mean", "field": "Anomaly", "as": "MeanAnom"}], "groupby": ["Decade"] },
+    { "calculate": "toString(datum.Decade) + 's'", "as": "DecadeLabel" },
+    {
+      "window": [{ "op": "rank", "as": "r" }],
+      "sort": [{ "field": "Decade", "order": "ascending" }]
+    }
   ],
+
   "layer": [
+    { "mark": {"type": "rule", "strokeDash": [3,3]}, "encoding": { "y": { "datum": 0 } } },
+
     {
       "mark": {"type": "bar", "cornerRadiusTopLeft": 4, "cornerRadiusTopRight": 4},
       "encoding": {
@@ -25,14 +41,54 @@
           "type": "quantitative",
           "title": "Average anomaly (°C)"
         },
+        "color": {
+          "field": "MeanAnom",
+          "type": "quantitative",
+          "title": null,
+          "scale": {
+            "scheme": "redblue",
+            "domainMid": 0
+          }
+        },
+        "stroke": {
+          "condition": { "param": "hover", "empty": false, "value": "#333" },
+          "value": null
+        },
+        "strokeWidth": {
+          "condition": { "param": "hover", "empty": false, "value": 1.5 },
+          "value": 0
+        },
         "tooltip": [
-          {"field": "Decade", "type": "ordinal", "title": "Decade"},
+          {"field": "DecadeLabel", "type": "nominal", "title": "Decade"},
           {"field": "MeanAnom", "type": "quantitative", "format": ".2f", "title": "Decadal avg (°C)"}
         ]
       }
     },
-    { "mark": {"type": "rule", "strokeDash": [3,3]}, "encoding": { "y": { "datum": 0 } } }
+
+    {
+      "transform": [{"filter": "datum.r == max(datum.r)"}],
+      "mark": {"type": "text", "dy": -6, "fontWeight": "bold"},
+      "encoding": {
+        "x": {"field": "Decade", "type": "ordinal"},
+        "y": {"field": "MeanAnom", "type": "quantitative"},
+        "text": {"field": "MeanAnom", "type": "quantitative", "format": ".2f"}
+      }
+    },
+
+    {
+      "mark": {"type": "text", "dy": -6},
+      "encoding": {
+        "x": {"field": "Decade", "type": "ordinal"},
+        "y": {"field": "MeanAnom", "type": "quantitative"},
+        "text": {"field": "MeanAnom", "type": "quantitative", "format": ".2f"},
+        "opacity": {
+          "condition": { "param": "hover", "empty": false, "value": 1 },
+          "value": 0
+        }
+      }
+    }
   ],
+
   "config": {
     "axis": {"labelFont": "Inter", "titleFont": "Inter"},
     "view": {"stroke": null}
