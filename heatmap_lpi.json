@@ -14,9 +14,7 @@
 
   "transform": [
     { "filter": "isValid(datum.Entity) && isValid(datum.Year) && isValid(datum['Living Planet Index'])" },
-
     { "calculate": "toNumber(datum['Living Planet Index'])", "as": "LPI100" },
-
     {
       "aggregate": [{ "op": "mean", "field": "LPI100", "as": "LPI100_mean" }],
       "groupby": ["Entity", "Year"]
@@ -33,7 +31,12 @@
       "type": "quantitative",
       "title": "LPI (1970 = 100)",
       "scale": { "scheme": "redyellowgreen" }
-    }
+    },
+    "tooltip": [
+      { "field": "Entity", "title": "Region" },
+      { "field": "Year", "title": "Year" },
+      { "field": "LPI100_mean", "title": "Index (1970 = 100)", "type": "quantitative", "format": ".0f" }
+    ]
   },
 
   "config": {
