@@ -18,8 +18,8 @@
     { "filter": "datum.Entity == 'World'" },
     { "calculate": "toNumber(datum.Year)", "as": "YearNum" },
     { "filter": "datum.YearNum >= FromYear" },
-    { "calculate": "toNumber(datum['Living Planet Index'])", "as": "LPI_1970eq100" },   // already 1970=100 in your CSV
-    { "calculate": "datum.LPI_1970eq100 / 100", "as": "LPI_1970eq1" }                  // for tooltip (1970=1 form)
+    { "calculate": "toNumber(datum['Living Planet Index'])", "as": "LPI_1970eq100" },   
+    { "calculate": "datum.LPI_1970eq100 / 100", "as": "LPI_1970eq1" }                  
   ],
 
   "encoding": {
