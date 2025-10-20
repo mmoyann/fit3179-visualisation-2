@@ -15,10 +15,8 @@
   "transform": [
     { "filter": "isValid(datum.Entity) && isValid(datum.Year) && isValid(datum['Living Planet Index'])" },
 
-    /* Your CSV already uses 1970 = 100, so just coerce to number */
     { "calculate": "toNumber(datum['Living Planet Index'])", "as": "LPI100" },
 
-    /* Ensure exactly one value per (Entity, Year) */
     {
       "aggregate": [{ "op": "mean", "field": "LPI100", "as": "LPI100_mean" }],
       "groupby": ["Entity", "Year"]
