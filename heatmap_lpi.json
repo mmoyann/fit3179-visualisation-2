@@ -1,8 +1,8 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "LPI heatmap by region and year.",
+  "description": "Living Planet Index (1970 = 100) by region and year.",
   "width": 900,
-  "height": {"step": 20},
+  "height": { "step": 20 },
 
   "data": {
     "url": "global-living-planet-index.csv",
@@ -14,25 +14,28 @@
 
   "transform": [
     { "filter": "isValid(datum.Entity) && isValid(datum.Year) && isValid(datum['Living Planet Index'])" },
-    { "calculate": "datum['Living Planet Index'] * 100", "as": "LPI100" }
+
+    /* Your CSV already uses 1970 = 100, so just coerce to number */
+    { "calculate": "toNumber(datum['Living Planet Index'])", "as": "LPI100" },
+
+    /* Ensure exactly one value per (Entity, Year) */
+    {
+      "aggregate": [{ "op": "mean", "field": "LPI100", "as": "LPI100_mean" }],
+      "groupby": ["Entity", "Year"]
+    }
   ],
 
   "mark": { "type": "rect" },
 
   "encoding": {
-    "x": { "field": "Year", "type": "quantitative", "title": "Year", "axis": { "tickCount": 10 } },
+    "x": { "field": "Year", "type": "ordinal", "title": "Year", "sort": "ascending" },
     "y": { "field": "Entity", "type": "nominal", "title": "Region" },
     "color": {
-      "field": "LPI100",
+      "field": "LPI100_mean",
       "type": "quantitative",
       "title": "LPI (1970 = 100)",
       "scale": { "scheme": "redyellowgreen" }
-    },
-    "tooltip": [
-      { "field": "Entity", "title": "Region" },
-      { "field": "Year", "title": "Year" },
-      { "field": "LPI100", "title": "Index (1970 = 100)", "type": "quantitative", "format": ".0f" }
-    ]
+    }
   },
 
   "config": {
